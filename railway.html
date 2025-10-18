@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cnfrm_tkt - Railway Ticket Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --text-light: #333;
+            --text-dark: #f5f5f5;
+            --bg-light: #f9f9f9;
+            --bg-dark: #1a1a2e;
+            --card-light: #ffffff;
+            --card-dark: #16213e;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .light-theme {
+            --bg-color: var(--bg-light);
+            --text-color: var(--text-light);
+            --card-bg: var(--card-light);
+            --header-bg: var(--primary);
+            --header-text: var(--light);
+        }
+
+        .dark-theme {
+            --bg-color: var(--bg-dark);
+            --text-color: var(--text-dark);
+            --card-bg: var(--card-dark);
+            --header-bg: var(--dark);
+            --header-text: var(--light);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--secondary);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--header-text);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .booking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .booking-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            border: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .step.active .step-circle {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .step.completed .step-circle {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .train-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .train-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .train-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .train-card.selected {
+            border-color: var(--secondary);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .train-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .train-info p {
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 3px;
+        }
+
+        .train-timing {
+            text-align: right;
+        }
+
+        .train-timing .time {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .train-timing .duration {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .seat-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .seat-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .seat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .seat-card.selected {
+            border-color: var(--success);
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .seat-card.unavailable {
+            background-color: rgba(231, 76, 60, 0.1);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .seat-type {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .seat-price {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .berth-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .berth-option {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .berth-option.selected {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .booking-summary {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .confirmation-message {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .success-message {
+            color: var(--success);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .booking-steps {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+
+            .booking-steps::before {
+                display: none;
+            }
+
+            .step {
+                flex-direction: row;
+                gap: 15px;
+            }
+
+            .train-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .train-timing {
+                text-align: left;
+            }
+
+            .seat-selection {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+
+        .coach-layout {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .coach {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-width: 500px;
+        }
+
+        .coach-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        .coach-seats {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+        }
+
+        .seat {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .seat.available {
+            background-color: rgba(46, 204, 113, 0.2);
+            border: 1px solid var(--success);
+        }
+
+        .seat.selected {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .seat.unavailable {
+            background-color: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--accent);
+            cursor: not-allowed;
+        }
+
+        .passenger-form {
+            margin-top: 20px;
+        }
+
+        .passenger-details {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .passenger-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .passenger-number {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-train"></i>
+                    <h1>cnfrm_tkt</h1>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i> <span>Dark Mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="booking-steps">
+            <div class="step active" id="step1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Select Journey</div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Choose Train</div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Select Seats</div>
+            </div>
+            <div class="step" id="step4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Confirm Booking</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Journey Details -->
+        <div class="card" id="journeyDetails">
+            <h2 class="card-title"><i class="fas fa-route"></i> Journey Details</h2>
+            <div class="form-group">
+                <label for="fromStation">From Station</label>
+                <select id="fromStation">
+                    <option value="">Select departure station</option>
+                    <option value="NDLS">New Delhi (NDLS)</option>
+                    <option value="MUMBA">Mumbai Central (MUMBA)</option>
+                    <option value="CNB">Kanpur Central (CNB)</option>
+                    <option value="BLR">Bengaluru City (BLR)</option>
+                    <option value="HWH">Howrah Junction (HWH)</option>
+                    <option value="MAS">Chennai Central (MAS)</option>
+                    <option value="ADI">Ahmedabad Junction (ADI)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="toStation">To Station</label>
+                <select id="toStation">
+                    <option value="">Select destination station</option>
+                    <option value="NDLS">New Delhi (NDLS)</option>
+                    <option value="MUMBA">Mumbai Central (MUMBA)</option>
+                    <option value="CNB">Kanpur Central (CNB)</option>
+                    <option value="BLR">Bengaluru City (BLR)</option>
+                    <option value="HWH">Howrah Junction (HWH)</option>
+                    <option value="MAS">Chennai Central (MAS)</option>
+                    <option value="ADI">Ahmedabad Junction (ADI)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="journeyDate">Journey Date</label>
+                <input type="date" id="journeyDate" min="">
+            </div>
+            <button class="btn btn-primary btn-block" id="searchTrains">
+                <i class="fas fa-search"></i> Search Trains
+            </button>
+        </div>
+
+        <!-- Step 2: Train Selection -->
+        <div class="card hidden" id="trainSelection">
+            <h2 class="card-title"><i class="fas fa-train"></i> Available Trains</h2>
+            <div class="train-list" id="trainList">
+                <!-- Train cards will be dynamically inserted here -->
+            </div>
+            <div class="navigation-buttons">
+                <button class="btn" id="backToJourney">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button class="btn btn-primary" id="proceedToSeats">
+                    Proceed to Seat Selection <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Seat Selection -->
+        <div class="card hidden" id="seatSelection">
+            <h2 class="card-title"><i class="fas fa-couch"></i> Select Your Seats</h2>
+            <div class="train-info-card card">
+                <h3 id="selectedTrainName">Rajdhani Express (12951)</h3>
+                <p id="selectedTrainRoute">New Delhi (NDLS) to Mumbai Central (MUMBA)</p>
+                <p id="selectedTrainTiming">16:00 - 08:30 (Next day)</p>
+                <p id="selectedTrainDate">Date: 15 Feb 2024</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Number of Passengers</label>
+                <select id="passengerCount">
+                    <option value="1">1 Passenger</option>
+                    <option value="2">2 Passengers</option>
+                    <option value="3">3 Passengers</option>
+                    <option value="4">4 Passengers</option>
+                    <option value="5">5 Passengers</option>
+                </select>
+            </div>
+            
+            <div class="passenger-form" id="passengerForm">
+                <!-- Passenger forms will be dynamically generated here -->
+            </div>
+            
+            <div class="berth-options">
+                <div class="berth-option selected" data-berth="lower">Lower Berth</div>
+                <div class="berth-option" data-berth="middle">Middle Berth</div>
+                <div class="berth-option" data-berth="upper">Upper Berth</div>
+                <div class="berth-option" data-berth="side-lower">Side Lower</div>
+                <div class="berth-option" data-berth="side-upper">Side Upper</div>
+            </div>
+            
+            <div class="coach-layout">
+                <div class="coach">
+                    <div class="coach-title">Coach A1</div>
+                    <div class="coach-seats" id="coachA1">
+                        <!-- Seats will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="btn" id="backToTrains">
+                    <i class="fas fa-arrow-left"></i> Back to Trains
+                </button>
+                <button class="btn btn-primary" id="proceedToPayment">
+                    Proceed to Payment <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Booking Confirmation -->
+        <div class="card hidden" id="bookingConfirmation">
+            <h2 class="card-title"><i class="fas fa-receipt"></i> Booking Summary</h2>
+            
+            <div class="booking-summary">
+                <div class="summary-item">
+                    <span>Train</span>
+                    <span id="summaryTrain">Rajdhani Express (12951)</span>
+                </div>
+                <div class="summary-item">
+                    <span>Route</span>
+                    <span id="summaryRoute">New Delhi to Mumbai Central</span>
+                </div>
+                <div class="summary-item">
+                    <span>Date & Time</span>
+                    <span id="summaryDateTime">15 Feb 2024, 16:00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Passengers</span>
+                    <span id="summaryPassengers">2 Adults</span>
+                </div>
+                <div class="summary-item">
+                    <span>Seats</span>
+                    <span id="summarySeats">A1-12, A1-13 (Lower Berth)</span>
+                </div>
+                <div class="summary-item">
+                    <span>Base Fare</span>
+                    <span id="summaryBaseFare">₹3,700.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Taxes & Charges</span>
+                    <span id="summaryTaxes">₹300.00</span>
+                </div>
+                <div class="summary-item summary-total">
+                    <span>Total Amount</span>
+                    <span id="summaryTotal">₹4,000.00</span>
+                </div>
+            </div>
+            
+            <div class="confirmation-message hidden" id="successMessage">
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i> Booking Confirmed!
+                </div>
+                <p>Your tickets have been successfully booked. PNR: <strong id="pnrNumber">PNR829175</strong></p>
+                <p>You will receive a confirmation email shortly.</p>
+                <button class="btn btn-success" id="newBooking">
+                    <i class="fas fa-plus"></i> New Booking
+                </button>
+            </div>
+            
+            <div class="confirmation-message hidden" id="errorMessage">
+                <div class="error-message">
+                    <i class="fas fa-times-circle"></i> Seats Not Available
+                </div>
+                <p>Sorry, the selected seats are no longer available.</p>
+                <p>Please try selecting different seats or another train.</p>
+                <button class="btn" id="tryAgain">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="btn" id="backToSeats">
+                    <i class="fas fa-arrow-left"></i> Back to Seats
+                </button>
+                <button class="btn btn-success" id="confirmBooking">
+                    <i class="fas fa-credit-card"></i> Confirm & Pay
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Set minimum date to today
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        document.getElementById('journeyDate').min = formattedDate;
+        document.getElementById('journeyDate').value = formattedDate;
+        
+        // Theme toggle functionality
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const body = document.body;
+            const icon = this.querySelector('i');
+            const text = this.querySelector('span');
+            
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                icon.className = 'fas fa-sun';
+                text.textContent = ' Light Mode';
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                icon.className = 'fas fa-moon';
+                text.textContent = ' Dark Mode';
+            }
+        });
+
+        // Sample train data with dynamic date generation
+        function generateTrains(from, to, date) {
+            const formattedDate = formatDateForDisplay(date);
+            
+            return [
+                {
+                    id: 1,
+                    name: "Rajdhani Express",
+                    number: "12951",
+                    from: from,
+                    to: to,
+                    departure: "16:00",
+                    arrival: "08:30",
+                    duration: "16h 30m",
+                    date: date,
+                    availableSeats: Math.floor(Math.random() * 30) + 10,
+                    fare: 1850,
+                    type: "Superfast"
+                },
+                {
+                    id: 2,
+                    name: "Shatabdi Express",
+                    number: "12001",
+                    from: from,
+                    to: to,
+                    departure: "06:00",
+                    arrival: "12:30",
+                    duration: "6h 30m",
+                    date: date,
+                    availableSeats: Math.floor(Math.random() * 20) + 5,
+                    fare: 950,
+                    type: "Express"
+                },
+                {
+                    id: 3,
+                    name: "Duronto Express",
+                    number: "12245",
+                    from: from,
+                    to: to,
+                    departure: "20:45",
+                    arrival: "10:30",
+                    duration: "13h 45m",
+                    date: date,
+                    availableSeats: Math.floor(Math.random() * 40) + 15,
+                    fare: 1200,
+                    type: "Superfast"
+                },
+                {
+                    id: 4,
+                    name: "Garib Rath",
+                    number: "12215",
+                    from: from,
+                    to: to,
+                    departure: "14:20",
+                    arrival: "05:15",
+                    duration: "14h 55m",
+                    date: date,
+                    availableSeats: Math.floor(Math.random() * 50) + 20,
+                    fare: 750,
+                    type: "Express"
+                }
+            ];
+        }
+
+        // Step navigation
+        let currentStep = 1;
+        let selectedTrain = null;
+        let selectedSeats = [];
+        let selectedBerth = 'lower';
+        let passengerDetails = [];
+
+        document.getElementById('searchTrains').addEventListener('click', function() {
+            const fromStation = document.getElementById('fromStation').value;
+            const toStation = document.getElementById('toStation').value;
+            const journeyDate = document.getElementById('journeyDate').value;
+            
+            if (!fromStation || !toStation || !journeyDate) {
+                alert('Please fill in all journey details');
+                return;
+            }
+            
+            if (fromStation === toStation) {
+                alert('From and To stations cannot be the same');
+                return;
+            }
+            
+            // Generate trains based on selection
+            const filteredTrains = generateTrains(fromStation, toStation, journeyDate);
+            
+            if (filteredTrains.length === 0) {
+                alert('No trains found for the selected route and date');
+                return;
+            }
+            
+            // Display trains
+            displayTrains(filteredTrains);
+            
+            // Move to step 2
+            navigateToStep(2);
+        });
+
+        document.getElementById('backToJourney').addEventListener('click', function() {
+            navigateToStep(1);
+        });
+
+        document.getElementById('proceedToSeats').addEventListener('click', function() {
+            if (!selectedTrain) {
+                alert('Please select a train');
+                return;
+            }
+            
+            // Update train info in seat selection
+            document.getElementById('selectedTrainName').textContent = `${selectedTrain.name} (${selectedTrain.number})`;
+            document.getElementById('selectedTrainRoute').textContent = 
+                `${getStationName(selectedTrain.from)} to ${getStationName(selectedTrain.to)}`;
+            document.getElementById('selectedTrainTiming').textContent = 
+                `${selectedTrain.departure} - ${selectedTrain.arrival} (${selectedTrain.duration})`;
+            document.getElementById('selectedTrainDate').textContent = 
+                `Date: ${formatDateForDisplay(selectedTrain.date)}`;
+            
+            // Generate passenger forms
+            generatePassengerForms();
+            
+            // Generate coach layout
+            generateCoachLayout();
+            
+            navigateToStep(3);
+        });
+
+        document.getElementById('backToTrains').addEventListener('click', function() {
+            navigateToStep(2);
+        });
+
+        document.getElementById('proceedToPayment').addEventListener('click', function() {
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+            
+            if (selectedSeats.length !== passengerCount) {
+                alert(`Please select exactly ${passengerCount} seat(s)`);
+                return;
+            }
+            
+            // Validate passenger details
+            if (!validatePassengerDetails()) {
+                alert('Please fill in all passenger details correctly');
+                return;
+            }
+            
+            // Update booking summary
+            updateBookingSummary();
+            
+            navigateToStep(4);
+        });
+
+        document.getElementById('backToSeats').addEventListener('click', function() {
+            navigateToStep(3);
+        });
+
+        document.getElementById('confirmBooking').addEventListener('click', function() {
+            // Simulate booking process
+            const isSuccess = Math.random() > 0.2; // 80% success rate
+            
+            if (isSuccess) {
+                document.getElementById('successMessage').classList.remove('hidden');
+                document.getElementById('errorMessage').classList.add('hidden');
+                
+                // Generate random PNR
+                const pnr = 'PNR' + Math.floor(100000 + Math.random() * 900000);
+                document.getElementById('pnrNumber').textContent = pnr;
+                
+                // Update steps to show completion
+                document.getElementById('step4').classList.add('completed');
+            } else {
+                document.getElementById('successMessage').classList.add('hidden');
+                document.getElementById('errorMessage').classList.remove('hidden');
+            }
+            
+            // Hide the confirm button
+            this.style.display = 'none';
+        });
+
+        document.getElementById('newBooking').addEventListener('click', function() {
+            // Reset the form
+            resetForm();
+            navigateToStep(1);
+        });
+
+        document.getElementById('tryAgain').addEventListener('click', function() {
+            document.getElementById('errorMessage').classList.add('hidden');
+            document.getElementById('confirmBooking').style.display = 'block';
+        });
+
+        // Passenger count change handler
+        document.getElementById('passengerCount').addEventListener('change', function() {
+            generatePassengerForms();
+            selectedSeats = []; // Reset selected seats when passenger count changes
+            generateCoachLayout(); // Regenerate layout to reset selections
+        });
+
+        // Helper functions
+        function navigateToStep(step) {
+            // Hide all steps
+            document.getElementById('journeyDetails').classList.add('hidden');
+            document.getElementById('trainSelection').classList.add('hidden');
+            document.getElementById('seatSelection').classList.add('hidden');
+            document.getElementById('bookingConfirmation').classList.add('hidden');
+            
+            // Show current step
+            if (step === 1) {
+                document.getElementById('journeyDetails').classList.remove('hidden');
+            } else if (step === 2) {
+                document.getElementById('trainSelection').classList.remove('hidden');
+            } else if (step === 3) {
+                document.getElementById('seatSelection').classList.remove('hidden');
+            } else if (step === 4) {
+                document.getElementById('bookingConfirmation').classList.remove('hidden');
+            }
+            
+            // Update step indicators
+            document.querySelectorAll('.step').forEach((stepEl, index) => {
+                if (index + 1 < step) {
+                    stepEl.classList.add('completed');
+                    stepEl.classList.remove('active');
+                } else if (index + 1 === step) {
+                    stepEl.classList.add('active');
+                    stepEl.classList.remove('completed');
+                } else {
+                    stepEl.classList.remove('active', 'completed');
+                }
+            });
+            
+            currentStep = step;
+        }
+
+        function displayTrains(trains) {
+            const trainList = document.getElementById('trainList');
+            trainList.innerHTML = '';
+            
+            trains.forEach(train => {
+                const trainCard = document.createElement('div');
+                trainCard.className = 'train-card';
+                trainCard.dataset.trainId = train.id;
+                
+                trainCard.innerHTML = `
+                    <div class="train-info">
+                        <h3>${train.name} (${train.number})</h3>
+                        <p>${getStationName(train.from)} to ${getStationName(train.to)}</p>
+                        <p>${train.type} • Available seats: ${train.availableSeats}</p>
+                        <p>Date: ${formatDateForDisplay(train.date)}</p>
+                    </div>
+                    <div class="train-timing">
+                        <div class="time">${train.departure}</div>
+                        <div class="duration">${train.duration}</div>
+                        <div class="fare">₹${train.fare}</div>
+                    </div>
+                `;
+                
+                trainCard.addEventListener('click', function() {
+                    document.querySelectorAll('.train-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    selectedTrain = train;
+                });
+                
+                trainList.appendChild(trainCard);
+            });
+        }
+
+        function getStationName(code) {
+            const stations = {
+                'NDLS': 'New Delhi',
+                'MUMBA': 'Mumbai Central',
+                'CNB': 'Kanpur Central',
+                'BLR': 'Bengaluru City',
+                'HWH': 'Howrah Junction',
+                'MAS': 'Chennai Central',
+                'ADI': 'Ahmedabad Junction'
+            };
+            return stations[code] || code;
+        }
+
+        function generatePassengerForms() {
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+            const passengerForm = document.getElementById('passengerForm');
+            passengerForm.innerHTML = '';
+            
+            passengerDetails = [];
+            
+            for (let i = 1; i <= passengerCount; i++) {
+                const passengerDiv = document.createElement('div');
+                passengerDiv.className = 'passenger-details';
+                
+                passengerDiv.innerHTML = `
+                    <div class="passenger-header">
+                        <div class="passenger-number">Passenger ${i}</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="passengerName${i}">Full Name</label>
+                            <input type="text" id="passengerName${i}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="passengerAge${i}">Age</label>
+                            <input type="number" id="passengerAge${i}" min="1" max="120" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="passengerGender${i}">Gender</label>
+                            <select id="passengerGender${i}" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="passengerBerth${i}">Berth Preference</label>
+                            <select id="passengerBerth${i}" required>
+                                <option value="no-preference">No Preference</option>
+                                <option value="lower">Lower</option>
+                                <option value="middle">Middle</option>
+                                <option value="upper">Upper</option>
+                                <option value="side-lower">Side Lower</option>
+                                <option value="side-upper">Side Upper</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                
+                passengerForm.appendChild(passengerDiv);
+            }
+        }
+
+        function generateCoachLayout() {
+            const coach = document.getElementById('coachA1');
+            coach.innerHTML = '';
+            
+            // Generate 60 seats (6 rows x 10 columns)
+            for (let i = 1; i <= 60; i++) {
+                const seat = document.createElement('div');
+                seat.className = 'seat available';
+                seat.textContent = i;
+                seat.dataset.seatNumber = i;
+                
+                // Randomly mark some seats as unavailable
+                if (Math.random() < 0.3) {
+                    seat.classList.remove('available');
+                    seat.classList.add('unavailable');
+                }
+                
+                seat.addEventListener('click', function() {
+                    if (this.classList.contains('unavailable')) return;
+                    
+                    const passengerCount = parseInt(document.getElementById('passengerCount').value);
+                    
+                    if (this.classList.contains('selected')) {
+                        this.classList.remove('selected');
+                        selectedSeats = selectedSeats.filter(s => s !== i);
+                    } else {
+                        if (selectedSeats.length < passengerCount) {
+                            this.classList.add('selected');
+                            selectedSeats.push(i);
+                        } else {
+                            alert(`You can only select ${passengerCount} seat(s)`);
+                        }
+                    }
+                });
+                
+                coach.appendChild(seat);
+            }
+        }
+
+        function validatePassengerDetails() {
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+            
+            for (let i = 1; i <= passengerCount; i++) {
+                const name = document.getElementById(`passengerName${i}`).value;
+                const age = document.getElementById(`passengerAge${i}`).value;
+                const gender = document.getElementById(`passengerGender${i}`).value;
+                
+                if (!name || !age || !gender) {
+                    return false;
+                }
+                
+                // Store passenger details
+                passengerDetails.push({
+                    name: name,
+                    age: age,
+                    gender: gender,
+                    berthPreference: document.getElementById(`passengerBerth${i}`).value
+                });
+            }
+            
+            return true;
+        }
+
+        function updateBookingSummary() {
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+            const baseFare = selectedTrain.fare * passengerCount;
+            const taxes = baseFare * 0.08; // 8% taxes
+            const total = baseFare + taxes;
+            
+            document.getElementById('summaryTrain').textContent = `${selectedTrain.name} (${selectedTrain.number})`;
+            document.getElementById('summaryRoute').textContent = 
+                `${getStationName(selectedTrain.from)} to ${getStationName(selectedTrain.to)}`;
+            document.getElementById('summaryDateTime').textContent = 
+                `${formatDateForDisplay(selectedTrain.date)} ${selectedTrain.departure}`;
+            document.getElementById('summaryPassengers').textContent = `${passengerCount} Adult(s)`;
+            document.getElementById('summarySeats').textContent = 
+                `A1-${selectedSeats.join(', A1-')} (${selectedBerth} Berth)`;
+            document.getElementById('summaryBaseFare').textContent = `₹${baseFare.toLocaleString('en-IN')}`;
+            document.getElementById('summaryTaxes').textContent = `₹${taxes.toFixed(2)}`;
+            document.getElementById('summaryTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
+        }
+
+        function formatDateForDisplay(dateString) {
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-IN', options);
+        }
+
+        function resetForm() {
+            // Reset form fields
+            document.getElementById('fromStation').value = '';
+            document.getElementById('toStation').value = '';
+            document.getElementById('journeyDate').value = formattedDate;
+            document.getElementById('passengerCount').value = '1';
+            
+            // Reset selections
+            selectedTrain = null;
+            selectedSeats = [];
+            selectedBerth = 'lower';
+            passengerDetails = [];
+            
+            // Reset UI
+            document.querySelectorAll('.train-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+            document.getElementById('confirmBooking').style.display = 'block';
+        }
+
+        // Berth selection
+        document.querySelectorAll('.berth-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.berth-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                selectedBerth = this.dataset.berth;
+            });
+        });
+
+        // Initialize with first berth selected
+        document.querySelector('.berth-option').classList.add('selected');
+    </script>
+</body>
+</html>
